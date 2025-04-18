@@ -50,14 +50,16 @@ app.options('*', cors());
 
 app.use(cookieParser());
 
-// jwt authentication
-app.use(jwt());
-
 // connect to postgres database
 app.use((req, _, next) => {
 	req.postgres = postgres;
 	next();
 });
+
+// jwt authentication
+app.use(jwt());
+
+app.use(setUserMiddleware); // Fetches user from DB & sets full `req.user`
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
@@ -80,6 +82,6 @@ app.use(errorConverter);
 app.use(errorHandler);
 
 // execute cron jobs
-executeCronJobs()
+executeCronJobs();
 
 module.exports = app;
