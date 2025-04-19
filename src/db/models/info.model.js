@@ -1,7 +1,7 @@
 // model/info.js
-import { baseAssociation, baseFields, baseScopes } from "./base_model";
+const { baseAssociation, baseFields, baseScopes } = require('./base_model');
 
-export default (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
 	const info = sequelize.define(
 		'info',
 		{
@@ -19,11 +19,11 @@ export default (sequelize, DataTypes) => {
 				type: DataTypes.TEXT,
 				allowNull: true,
 			},
-			cms_user_id: {
+			user_id: {
 				type: DataTypes.INTEGER,
 				allowNull: true,
 				references: {
-					model: 'cms_user',
+					model: 'user',
 					key: 'id',
 				},
 				onDelete: 'SET NULL',
@@ -39,8 +39,8 @@ export default (sequelize, DataTypes) => {
 	);
 
 	info.associate = (models) => {
-		info.belongsTo(models.cms_user, {
-			foreignKey: 'cms_user_id',
+		info.belongsTo(models.user, {
+			foreignKey: 'user_id',
 			onDelete: 'SET NULL',
 			onUpdate: 'CASCADE',
 		});

@@ -1,70 +1,66 @@
-import { Op } from 'sequelize';
+const { Op, DataTypes } = require('sequelize');
 
-export const baseFields = {
-    status: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-        allowNull: false,
-    },
-    deleted_by: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'cms_user',
-            key: 'id',
-        },
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
-    },
-    deleted_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
+const baseFields = {
+	status: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: true,
+		allowNull: false,
+	},
+	deleted_by: {
+		type: DataTypes.INTEGER,
+		allowNull: true,
+		references: {
+			model: 'user',
+			key: 'id',
+		},
+		onDelete: 'SET NULL',
+		onUpdate: 'CASCADE',
+	},
+	deleted_at: {
+		type: DataTypes.DATE,
+		allowNull: true,
+	},
 };
 
-import { Op } from 'sequelize';
-
-export const baseScopes = (withPassword) => ({
-    defaultScope: {
-        ...(!withPassword ? {} : { attributes: { exclude: ['password'] } }),
-        where: {
-            deleted_at: null,
-            status: true,
-        },
-    },
-    scopes: {
-        withDeleted: {}, // returns everything
-        withPassword: {
-            attributes: {},
-        },
-        onlyDeleted: {
-            where: {
-                deleted_at: {
-                    [Op.ne]: null,
-                },
-            },
-        },
-        notDeleted: {
-            where: {
-                deleted_at: null,
-            },
-        },
-        inactive: {
-            where: {
-                status: false,
-            },
-        },
-
-    },
+const baseScopes = (withPassword) => ({
+	defaultScope: {
+		...(!withPassword ? {} : { attributes: { exclude: ['password'] } }),
+		where: {
+			deleted_at: null,
+			status: true,
+		},
+	},
+	scopes: {
+		withDeleted: {}, // returns everything
+		withPassword: {
+			attributes: {},
+		},
+		onlyDeleted: {
+			where: {
+				deleted_at: {
+					[Op.ne]: null,
+				},
+			},
+		},
+		notDeleted: {
+			where: {
+				deleted_at: null,
+			},
+		},
+		inactive: {
+			where: {
+				status: false,
+			},
+		},
+	},
 });
 
-
-export const baseAssociation = (modelName, models) => {
-    modelName.belongsTo(models.cms_user, {
-        foreignKey: 'deleted_by',
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
-    });
+const baseAssociation = (modelName, models) => {
+	modelName.belongsTo(models.user, {
+		foreignKey: 'deleted_by',
+		onDelete: 'SET NULL',
+		onUpdate: 'CASCADE',
+	});
 };
 
 // export const addSoftDelete = (model) => {
@@ -75,3 +71,9 @@ export const baseAssociation = (modelName, models) => {
 //         );
 //     };
 // };
+
+module.exports = {
+	baseAssociation,
+	baseFields,
+	baseScopes,
+};

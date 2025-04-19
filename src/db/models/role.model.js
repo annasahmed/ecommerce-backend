@@ -28,10 +28,13 @@ module.exports = (sequelize, DataTypes) => {
 	);
 
 	role.associate = (models) => {
-		role.hasMany(models.cms_user, {
+		role.hasMany(models.user, {
 			foreignKey: 'id',
 			onDelete: 'RESTRICT',
 			onUpdate: 'CASCADE',
+		});
+		role.belongsToMany(models.permission, {
+			through: 'role_to_permission',
 		});
 	};
 

@@ -15,6 +15,7 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const responseFormatter = require('./middlewares/responseFormatter');
 const executeCronJobs = require('./utils/cron');
+const setUserMiddleware = require('./middlewares/setUserMiddleware');
 
 const app = express();
 

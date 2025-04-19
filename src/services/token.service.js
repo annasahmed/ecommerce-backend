@@ -40,7 +40,7 @@ async function generateAuthTokens({ userId, roleId }, isCmsUser) {
 		type: 'refresh',
 		expires: refreshTokenExpires,
 		type: tokenTypes.REFRESH,
-		...isCmsUser ? { cms_user_id: userId } : { user_id: userId }
+		...(isCmsUser ? { user_id: userId } : { app_user_id: userId }),
 	});
 
 	return {

@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const config = require('../config/config');
 const logger = require('../config/logger');
+const aws = require('@aws-sdk/client-ses');
 
 const { accessKeyId, secretAccessKey, region } = config.s3Bucket;
 

@@ -1,4 +1,4 @@
-const { baseFields, baseScopes } = require("./base_model");
+const { baseFields } = require('./base_model');
 
 module.exports = (sequelize, DataTypes) => {
 	const user = sequelize.define(
@@ -10,14 +10,25 @@ module.exports = (sequelize, DataTypes) => {
 				primaryKey: true,
 				autoIncrement: true,
 			},
-			name: {
+			first_name: {
 				type: DataTypes.STRING,
 				allowNull: false,
+			},
+			last_name: {
+				type: DataTypes.STRING,
+				allowNull: false,
+			},
+			image: {
+				type: DataTypes.STRING,
+				allowNull: true,
 			},
 			email: {
 				type: DataTypes.STRING,
 				allowNull: false,
 				unique: true,
+				validate: {
+					isEmail: true,
+				},
 			},
 			password: {
 				type: DataTypes.STRING,
@@ -28,29 +39,49 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 				defaultValue: false,
 			},
-			...baseFields,
+			role_id: {
+				type: DataTypes.INTEGER,
+				allowNull: false,
+				references: {
+					model: 'role',
+					key: 'id',
+				},
+				onDelete: 'RESTRICT',
+				onUpdate: 'CASCADE',
+			},
+			...baseFields.status,
 		},
 		{
-			/**
-			 * By default, sequelize will automatically transform all passed model names into plural
-			 * References: https://sequelize.org/master/manual/model-basics.html#table-name-inference
-			 */
 			tableName: 'user',
 			timestamps: true,
 			defaultScope: {
 				attributes: { exclude: ['password'] },
 			},
-			// if want to get password then use cms_user.scope('withPassword').findOne()
+			// if want to get password then use user.scope('withPassword').findOne()
 			scopes: {
 				withPassword: {
 					attributes: {},
 				},
 			},
-			...baseScopes(true),
-
+			// indexes: [
+			// 	{
+			// 		fields: ['email'],
+			// 		unique: true,
+			// 	},
+			// 	{
+			// 		fields: ['status'],
+			// 	},
+			// ],
 		}
 	);
+
 	user.associate = (models) => {
+		user.belongsTo(models.role, {
+			foreignKey: 'role_id',
+			onDelete: 'RESTRICT',
+			onUpdate: 'CASCADE',
+		});
+
 		user.hasOne(models.token);
 	};
 

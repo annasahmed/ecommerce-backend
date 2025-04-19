@@ -1,4 +1,4 @@
-export default (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
 	const role_to_permission = sequelize.define(
 		'role_to_permission',
 		{},
